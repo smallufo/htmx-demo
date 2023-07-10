@@ -10,10 +10,10 @@ import java.util.*
 
 @Controller
 @RequestMapping("/private/")
-class TopSecret {
+class TopSecret : AbstractController() {
+
     @GetMapping("/")
     fun index(model: Model): String {
-        model.addAttribute("now", Date())
         return "private-index"
     }
 

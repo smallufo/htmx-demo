@@ -16,10 +16,10 @@ import java.util.*
 
 @Controller
 @RequestMapping("/public/input")
-class InputCatalog {
+class InputCatalog : AbstractController() {
+
     @GetMapping
     fun start(model: Model): String {
-        model.addAttribute("now", Date().toInstant())
         return "input-catalog"
     }
 

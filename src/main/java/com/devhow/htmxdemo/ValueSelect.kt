@@ -15,7 +15,7 @@ import java.util.*
 
 @Controller
 @RequestMapping("/public/value-select")
-class ValueSelect {
+class ValueSelect : AbstractController() {
     /**
      * IntelliJ has a plugin that supports handlebars inline (and file template) syntax highlighting.
      *
@@ -55,7 +55,6 @@ class ValueSelect {
 
     @GetMapping
     fun start(model: Model): String {
-        model.addAttribute("now", Date().toInstant())
         return "value-select"
     }
 

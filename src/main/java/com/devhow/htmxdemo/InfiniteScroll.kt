@@ -26,10 +26,9 @@ import java.util.*
  */
 @Controller
 @RequestMapping("/public/infinite-scroll")
-class InfiniteScroll {
+class InfiniteScroll : AbstractController() {
     @GetMapping
     fun start(model: Model): String {
-        model.addAttribute("now", Date().toInstant())
         return "infinite-scroll"
     }
 

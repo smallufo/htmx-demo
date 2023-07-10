@@ -11,14 +11,13 @@ import mu.KotlinLogging
 
 @Controller
 @RequestMapping("/public/click-to-edit")
-class ClickToEdit {
+class ClickToEdit : AbstractController() {
 
   private val logger = KotlinLogging.logger { }
 
   @GetMapping
   fun start(model: Model): String {
     model.addAttribute("contact", Contact.demoContact())
-    model.addAttribute("now", Date().toInstant())
     return "click-to-edit"
   }
 

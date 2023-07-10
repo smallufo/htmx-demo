@@ -1,5 +1,6 @@
 package com.devhow.htmxdemo
 
+import mu.KotlinLogging
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -8,10 +9,12 @@ import java.util.*
 
 @Controller
 @RequestMapping("/public/todo")
-class ToDoList {
+class ToDoList : AbstractController() {
+
+    private val logger = KotlinLogging.logger { }
+
     @GetMapping
     fun start(model: Model): String {
-        model.addAttribute("now", Date().toInstant())
         model.addAttribute("item", "Get Stuff Done")
         return "todo"
     }
@@ -30,9 +33,11 @@ class ToDoList {
     fun create(@RequestParam("new-todo") todo: String?, model: Model): String {
         model.addAttribute("item", todo)
 
+        logger.info { "created todo : $todo" }
+
         // Currently, IntelliJ doesn't recognize a Thymeleaf fragment returned in a controller.
         // https://youtrack.jetbrains.com/issue/IDEA-276625
         //
-        return "todo :: todo"
+        return "todo::todo"
     }
 }

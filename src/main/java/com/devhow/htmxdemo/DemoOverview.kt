@@ -6,10 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping
 import java.util.*
 
 @Controller
-class DemoOverview {
+class DemoOverview : AbstractController() {
     @GetMapping("/")
     fun overview(model: Model): String {
-        model.addAttribute("now", Date())
         return "index"
     }
 }
