@@ -1,167 +1,157 @@
-package com.devhow.htmxdemo;
+package com.devhow.htmxdemo
 
-import j2html.tags.ContainerTag;
-import j2html.tags.specialized.PTag;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.awt.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Date;
-import java.util.Map;
-
-import static j2html.TagCreator.*;
+import j2html.TagCreator
+import j2html.tags.ContainerTag
+import j2html.tags.specialized.PTag
+import org.springframework.http.MediaType
+import org.springframework.stereotype.Controller
+import org.springframework.ui.Model
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
+import java.awt.Color
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.util.*
 
 @Controller
 @RequestMapping("/public/input")
-public class InputCatalog {
-
+class InputCatalog {
     @GetMapping
-    public String start(Model model) {
-        model.addAttribute("now", new Date().toInstant());
-        return "input-catalog";
+    fun start(model: Model): String {
+        model.addAttribute("now", Date().toInstant())
+        return "input-catalog"
     }
 
-    @DeleteMapping(path = "/delete", produces = MediaType.TEXT_HTML_VALUE)
+    @DeleteMapping(path = ["/delete"], produces = [MediaType.TEXT_HTML_VALUE])
     @ResponseBody
-    public String delete() {
-        return "";
+    fun delete(): String {
+        return ""
     }
 
-    @PostMapping(path = "/button", produces = MediaType.TEXT_HTML_VALUE)
+    @PostMapping(path = ["/button"], produces = [MediaType.TEXT_HTML_VALUE])
     @ResponseBody
-    public String button(@RequestParam("demo-button") String button) {
-        return p("Button " + button + " clicked.").render();
+    fun button(@RequestParam("demo-button") button: String): String {
+        return TagCreator.p("Button $button clicked.").render()
     }
 
-    @PostMapping(path = "/checkbox", produces = MediaType.TEXT_HTML_VALUE)
+    @PostMapping(path = ["/checkbox"], produces = [MediaType.TEXT_HTML_VALUE])
     @ResponseBody
-    public String checkbox(@RequestParam Map<String, String> parameters) {
-
-        if (parameters.containsKey("checkbox"))
-            if (parameters.containsKey(parameters.get("checkbox")))
-                return p("Checkbox " + parameters.get("checkbox") + " checked.").render();
-
-        return p("Checkbox " + parameters.get("checkbox") + " unchecked.").render();
+    fun checkbox(@RequestParam parameters: Map<String?, String>): String {
+        if (parameters.containsKey("checkbox")) if (parameters.containsKey(parameters["checkbox"])) return TagCreator.p(
+            "Checkbox " + parameters["checkbox"] + " checked."
+        ).render()
+        return TagCreator.p("Checkbox " + parameters["checkbox"] + " unchecked.").render()
     }
 
-    @PostMapping(path = "/radio", produces = MediaType.TEXT_HTML_VALUE)
+    @PostMapping(path = ["/radio"], produces = [MediaType.TEXT_HTML_VALUE])
     @ResponseBody
-    public String radio(@RequestParam("demo-radio") String selection) {
-        return p("Radio " + selection + " selected.").render();
+    fun radio(@RequestParam("demo-radio") selection: String): String {
+        return TagCreator.p("Radio $selection selected.").render()
     }
 
-    @PostMapping(path = "/slider", produces = MediaType.TEXT_HTML_VALUE)
+    @PostMapping(path = ["/slider"], produces = [MediaType.TEXT_HTML_VALUE])
     @ResponseBody
-    public String slider(@RequestParam("demo-range") Integer selection) {
-        return p("Slider " + selection + " value.").render();
+    fun slider(@RequestParam("demo-range") selection: Int): String {
+        return TagCreator.p("Slider $selection value.").render()
     }
 
-    @PostMapping(path = "/select-single", produces = MediaType.TEXT_HTML_VALUE)
+    @PostMapping(path = ["/select-single"], produces = [MediaType.TEXT_HTML_VALUE])
     @ResponseBody
-    public String selectSingle(@RequestParam("demo-select-single") String selection) {
-        return p("Selected " + selection + ".").render();
+    fun selectSingle(@RequestParam("demo-select-single") selection: String): String {
+        return TagCreator.p("Selected $selection.").render()
     }
 
-    @PostMapping(path = "/select-multiple", produces = MediaType.TEXT_HTML_VALUE)
+    @PostMapping(path = ["/select-multiple"], produces = [MediaType.TEXT_HTML_VALUE])
     @ResponseBody
-    public String selectMultiple(@RequestParam("demo-select-multiple") String[] selection) {
-        ContainerTag<PTag> p = p("Selected");
-
-        for (String s : selection)
-            p.with(span(" " + s));
-        return p.render();
+    fun selectMultiple(@RequestParam("demo-select-multiple") selection: Array<String>): String {
+        val p: ContainerTag<PTag> = TagCreator.p("Selected")
+        for (s in selection) p.with(TagCreator.span(" $s"))
+        return p.render()
     }
 
-    @PostMapping(path = "/date", produces = MediaType.TEXT_HTML_VALUE)
+    @PostMapping(path = ["/date"], produces = [MediaType.TEXT_HTML_VALUE])
     @ResponseBody
-    public String date(@RequestParam("demo-date") String date) {
-        LocalDate parse = LocalDate.parse(date);
-        return p("Selected " + parse + ".").render();
+    fun date(@RequestParam("demo-date") date: String?): String {
+        val parse = LocalDate.parse(date)
+        return TagCreator.p("Selected $parse.").render()
     }
 
-    @PostMapping(path = "/time", produces = MediaType.TEXT_HTML_VALUE)
+    @PostMapping(path = ["/time"], produces = [MediaType.TEXT_HTML_VALUE])
     @ResponseBody
-    public String time(@RequestParam("demo-time") String time) {
-        LocalTime parse = LocalTime.parse(time);
-        return p("Selected " + parse + ".").render();
+    fun time(@RequestParam("demo-time") time: String?): String {
+        val parse = LocalTime.parse(time)
+        return TagCreator.p("Selected $parse.").render()
     }
 
-    @PostMapping(path = "/datetime", produces = MediaType.TEXT_HTML_VALUE)
+    @PostMapping(path = ["/datetime"], produces = [MediaType.TEXT_HTML_VALUE])
     @ResponseBody
-    public String datetime(@RequestParam("demo-date-time-local") String datetime) {
-        LocalDateTime parse = LocalDateTime.parse(datetime);
-        return p("Selected " + parse + ".").render();
+    fun datetime(@RequestParam("demo-date-time-local") datetime: String?): String {
+        val parse = LocalDateTime.parse(datetime)
+        return TagCreator.p("Selected $parse.").render()
     }
 
-    @PostMapping(path = "/color", produces = MediaType.TEXT_HTML_VALUE)
+    @PostMapping(path = ["/color"], produces = [MediaType.TEXT_HTML_VALUE])
     @ResponseBody
-    public String color(@RequestParam("demo-color") String color) {
-
-        Color c = Color.decode(color);
-
-        return p(join(
+    fun color(@RequestParam("demo-color") color: String?): String {
+        val c = Color.decode(color)
+        return TagCreator.p(
+            TagCreator.join(
                 "Hex:",
                 color,
                 " RGB:",
-                c.getRed() + "",
-                c.getGreen() + "",
-                c.getBlue() + ""
-        )).render();
+                c.red.toString() + "",
+                c.green.toString() + "",
+                c.blue.toString() + ""
+            )
+        ).render()
     }
 
-    @PostMapping(path = "/number", produces = MediaType.TEXT_HTML_VALUE)
+    @PostMapping(path = ["/number"], produces = [MediaType.TEXT_HTML_VALUE])
     @ResponseBody
-    public String color(@RequestParam("demo-number") Integer num) {
-        return p("Number: " + num).render();
+    fun color(@RequestParam("demo-number") num: Int): String {
+        return TagCreator.p("Number: $num").render()
     }
 
-    @PostMapping(path = "/text", produces = MediaType.TEXT_HTML_VALUE)
+    @PostMapping(path = ["/text"], produces = [MediaType.TEXT_HTML_VALUE])
     @ResponseBody
-    public String text(@RequestHeader("HX-Trigger-Name") String trigger, @RequestParam Map<String, String> parameters) {
-        String target = parameters.get(trigger);
-        if (!parameters.containsKey(trigger))
-            return "";
-        return p(trigger + " set to " + target).render();
+    fun text(
+        @RequestHeader("HX-Trigger-Name") trigger: String,
+        @RequestParam parameters: Map<String?, String?>
+    ): String {
+        val target = parameters[trigger]
+        return if (!parameters.containsKey(trigger)) "" else TagCreator.p("$trigger set to $target").render()
     }
 
-    @PostMapping(path = "/file", produces = MediaType.TEXT_HTML_VALUE)
+    @PostMapping(path = ["/file"], produces = [MediaType.TEXT_HTML_VALUE])
     @ResponseBody
-    public String file(
-            @RequestParam("demo-file") MultipartFile file,
-            @RequestParam Map<String, String> parameters) {
-        ContainerTag<PTag> p = p("File uploaded! ").with(join(br(),
-                " File name: " + file.getName(), br(),
-                " File length: " + file.getSize() + " bytes", br(),
-                " File type: " + file.getContentType(), br(),
-                " Original file name: " + file.getOriginalFilename()
-        ));
-
-        return p.render();
+    fun file(
+        @RequestParam("demo-file") file: MultipartFile,
+        @RequestParam parameters: Map<String?, String?>?
+    ): String {
+        val p: ContainerTag<PTag> = TagCreator.p("File uploaded! ").with(
+            TagCreator.join(
+                TagCreator.br(),
+                " File name: " + file.name, TagCreator.br(),
+                " File length: " + file.size + " bytes", TagCreator.br(),
+                " File type: " + file.contentType, TagCreator.br(),
+                " Original file name: " + file.originalFilename
+            )
+        )
+        return p.render()
     }
 
-    @PostMapping(path = "/reset", produces = MediaType.TEXT_HTML_VALUE)
+    @PostMapping(path = ["/reset"], produces = [MediaType.TEXT_HTML_VALUE])
     @ResponseBody
-    public String reset() {
-        return p("Form reset!").render();
+    fun reset(): String {
+        return TagCreator.p("Form reset!").render()
     }
 
-    @PostMapping(path = "/submit", produces = MediaType.TEXT_HTML_VALUE)
+    @PostMapping(path = ["/submit"], produces = [MediaType.TEXT_HTML_VALUE])
     @ResponseBody
-    public String submit(@RequestParam Map<String, String> parameters) {
-
-        var p = p("Form submitted!");
-
-        for (String s : parameters.keySet())
-            p.with(join(br(), s + ":" + parameters.get(s)));
-
-        return p.render();
+    fun submit(@RequestParam parameters: Map<String, String>): String {
+        val p = TagCreator.p("Form submitted!")
+        for (s in parameters.keys) p.with(TagCreator.join(TagCreator.br(), s + ":" + parameters[s]))
+        return p.render()
     }
-
-
 }
