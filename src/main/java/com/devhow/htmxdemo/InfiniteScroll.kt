@@ -40,7 +40,6 @@ class InfiniteScroll {
                  <td>%s</td>
                  <td>%s</td>
              </tr>
-            
             """.trimIndent()
 
     @Language("html")
@@ -52,26 +51,19 @@ class InfiniteScroll {
                  <td>%s</td>
                  <td>%s</td>
              </tr>
-            
             """.trimIndent()
 
     @GetMapping(value = ["/page/{id}"], produces = [MediaType.TEXT_HTML_VALUE])
     @ResponseBody
     fun nextPage(@PathVariable id: Int): String {
-        val result = StringBuilder()
-        val demoContacts = Contact.randomContacts(9)
-        for (c in demoContacts) {
-            result.append(contactHtml.formatted(c.firstName, c.lastName, c.email))
+        Thread.sleep(500)
+        return buildString {
+            Contact.randomContacts(10).forEach { c ->
+                append(contactHtml.format(c.firstName, c.lastName, c.email))
+            }
+            Contact.randomContacts(1)[0].also { c ->
+                append(loadHtml.format(id + 1, c.firstName, c.lastName, c.email))
+            }
         }
-        val last = Contact.randomContacts(1)[0]
-        result.append(loadHtml.formatted(id + 1, last.firstName, last.lastName, last.email))
-
-        // This is just to simulate a slow[er] server response, causing the HTMX wait indicator to display
-        try {
-            Thread.sleep(500)
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-        }
-        return result.toString()
     }
 }
