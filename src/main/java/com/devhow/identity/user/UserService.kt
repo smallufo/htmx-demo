@@ -109,7 +109,7 @@ class UserService(
     }
 
     @Throws(IdentityServiceException::class)
-    fun signIn(username: String?, pass: String?): User {
+    fun signIn(username: String, pass: String): User {
         val user = userRepository.findByUsername(username).orElseThrow {
             IdentityServiceException(
                 IdentityServiceException.Reason.BAD_LOGIN, "Unknown Email"
@@ -192,7 +192,7 @@ class UserService(
         return Optional.of(savedUser)
     }
 
-    fun findUser(username: String?): Optional<User> {
+    fun findUser(username: String): Optional<User> {
         return userRepository.findByUsername(username)
     }
 
@@ -205,7 +205,7 @@ class UserService(
     }
 
     @Throws(IdentityServiceException::class, AuthenticationFailedException::class)
-    fun requestPasswordReset(username: String?): UserValidation {
+    fun requestPasswordReset(username: String): UserValidation {
         val user = userRepository.findByUsername(username).orElseThrow {
             IdentityServiceException(
                 IdentityServiceException.Reason.BAD_PASSWORD_RESET, "Missing email address. (a)"
@@ -230,7 +230,7 @@ class UserService(
     }
 
     @Throws(IdentityServiceException::class)
-    fun updatePassword(username: String?, passwordResetToken: String, newPassword: String?): User {
+    fun updatePassword(username: String, passwordResetToken: String, newPassword: String?): User {
         val user = userRepository.findByUsername(username).orElseThrow {
             IdentityServiceException(
                 IdentityServiceException.Reason.BAD_PASSWORD_RESET, "No user found with this email. (c)"
