@@ -1,7 +1,6 @@
 package com.devhow.identity.entity;
 
 
-import com.devhow.identity.user.TimeUtil;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -9,6 +8,8 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.UUID;
+
+import static com.devhow.identity.user.TimeUtilKt.now;
 
 @Entity(name = "user_validation")
 @Table(name = "user_validation")
@@ -71,13 +72,11 @@ public class UserValidation implements Serializable {
     }
 
     public boolean tokenIsCurrent() {
-        TimeUtil time = new TimeUtil();
-        return Math.abs(getTokenIssue().getTime() - time.now().getTime()) < 1000 * 60 * 60 * 24;
+        return Math.abs(getTokenIssue().getTime() - now().getTime()) < 1000 * 60 * 60 * 24;
     }
 
     public boolean passwordValidationIsCurrent() {
-        TimeUtil time = new TimeUtil();
-        return Math.abs(getPasswordResetIssue().getTime() - time.now().getTime()) < 1000 * 60 * 5;
+        return Math.abs(getPasswordResetIssue().getTime() - now().getTime()) < 1000 * 60 * 5;
     }
 
     public Long getUser() {

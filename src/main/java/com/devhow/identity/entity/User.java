@@ -1,6 +1,5 @@
 package com.devhow.identity.entity;
 
-import com.devhow.identity.user.TimeUtil;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.Authentication;
@@ -10,6 +9,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static com.devhow.identity.user.TimeUtilKt.now;
 
 @Entity(name = "users")
 @Table(name = "users")
@@ -113,8 +114,7 @@ public class User {
     }
 
     public void markTokenAsValid() {
-        TimeUtil time = new TimeUtil();
-        setTokenValidation(time.now());
+        setTokenValidation(now());
     }
 
     @Override
