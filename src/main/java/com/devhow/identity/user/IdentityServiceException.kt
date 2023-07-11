@@ -1,24 +1,9 @@
-package com.devhow.identity.user;
+package com.devhow.identity.user
 
-public class IdentityServiceException extends Exception {
+class IdentityServiceException(val reason : Reason,
+                               override val message: String? = null) : Exception(message) {
 
-    private final Reason reason;
-
-    public IdentityServiceException(Reason reason, String message) {
-        super(message);
-        this.reason = reason;
-    }
-
-    public IdentityServiceException(Reason reason) {
-        super();
-        this.reason = reason;
-    }
-
-    public Reason getReason() {
-        return reason;
-    }
-
-    public enum Reason {
+    enum class Reason {
         BAD_EMAIL,
         BAD_LOGIN,
         BAD_PASSWORD,

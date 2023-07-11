@@ -1,11 +1,10 @@
-package com.devhow.identity.user;
+package com.devhow.identity.user
 
-import java.sql.Timestamp;
-import java.util.Calendar;
+import java.sql.Timestamp
+import java.util.*
 
-public class TimeUtil {
-
-    public Timestamp now() {
-        return new java.sql.Timestamp(Calendar.getInstance().getTime().getTime());
+class TimeUtil {
+    fun now(): Timestamp {
+        return Timestamp(Calendar.getInstance().time.time)
     }
 }

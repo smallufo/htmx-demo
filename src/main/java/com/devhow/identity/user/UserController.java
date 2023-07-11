@@ -132,7 +132,7 @@ public class UserController {
     @GetMapping("/sign-up/confirm")
     String confirmMail(@RequestParam("token") String token, ModelMap modelMap, HttpServletResponse response) {
         try {
-            userService.confirmUser(token).orElseThrow(() -> new IdentityServiceException(BAD_TOKEN));
+            userService.confirmUser(token).orElseThrow(() -> new IdentityServiceException(BAD_TOKEN, null));
             return signIn("", "Email Address Confirmed!", modelMap, response);
         } catch (IdentityServiceException e) {
             return signIn("", "Unknown Token", modelMap, response);
