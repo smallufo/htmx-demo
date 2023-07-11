@@ -1,35 +1,42 @@
-package com.devhow.identity.config;
+package com.devhow.identity.config
 
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.authentication.BadCredentialsException
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.AuthenticationException
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.crypto.password.PasswordEncoder
 
-public class DaoOverride extends DaoAuthenticationProvider {
+class DaoOverride : DaoAuthenticationProvider() {
 
-    PasswordEncoder passwordEncoder;
+    private lateinit var passwordEncoder: PasswordEncoder
 
-    @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        return super.authenticate(authentication);
+    @Throws(AuthenticationException::class)
+    override fun authenticate(authentication: Authentication): Authentication {
+        return super.authenticate(authentication)
     }
 
-    @Override
-    protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-        if (authentication.getCredentials() == null) {
-            this.logger.debug("Failed to authenticate since no credentials provided");
-            throw new BadCredentialsException(this.messages
-                    .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "No password"));
+    @Throws(AuthenticationException::class)
+    override fun additionalAuthenticationChecks(
+        userDetails: UserDetails,
+        authentication: UsernamePasswordAuthenticationToken
+    ) {
+        if (authentication.credentials == null) {
+            logger.debug("Failed to authenticate since no credentials provided")
+            throw BadCredentialsException(
+                messages
+                    .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "No password")
+            )
         }
-        String presentedPassword = authentication.getCredentials().toString();
-        if (!this.passwordEncoder.matches(presentedPassword, userDetails.getPassword())) {
-            this.logger.debug("Failed to authenticate since password does not match stored value");
-            throw new BadCredentialsException(this.messages
-                    .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials"));
+        val presentedPassword = authentication.credentials.toString()
+        if (!this.passwordEncoder!!.matches(presentedPassword, userDetails.password)) {
+            logger.debug("Failed to authenticate since password does not match stored value")
+            throw BadCredentialsException(
+                messages
+                    .getMessage("AbstractUserDetailsAuthenticationProvider.badCredentials", "Bad credentials")
+            )
         }
-        super.additionalAuthenticationChecks(userDetails, authentication);
+        super.additionalAuthenticationChecks(userDetails, authentication)
     }
 }

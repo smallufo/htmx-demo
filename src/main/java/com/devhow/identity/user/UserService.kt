@@ -3,6 +3,7 @@ package com.devhow.identity.user
 import com.devhow.identity.entity.User
 import com.devhow.identity.entity.UserValidation
 import jakarta.mail.AuthenticationFailedException
+import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -16,6 +17,8 @@ class UserService(
     private val passwordEncoder: PasswordEncoder,
     private val emailSenderService: EmailSenderService
 ) {
+    private val logger = KotlinLogging.logger { }
+
     @Value("\${external.server.address}")
     private lateinit var serverAddress: String
 
@@ -126,6 +129,8 @@ class UserService(
     @Throws(IdentityServiceException::class, AuthenticationFailedException::class)
     fun signUpUser(username: String, pass: String?, isTest: Boolean): User {
 
+        logger.info { "signUp , username = $username , pass = $pass , isTest = $isTest" }
+
         // First normalize user email
         checkEmailAddress(username)
         checkPassword(pass)
@@ -135,10 +140,11 @@ class UserService(
         if (foundUser.isPresent) {
             throw IdentityServiceException(IdentityServiceException.Reason.BAD_EMAIL, "Email already exists.")
         }
-        var newUser = User()
-        newUser.username = username.trim { it <= ' ' }.lowercase(Locale.getDefault())
-        newUser.password = passwordEncoder.encode(pass)
-        newUser.isTest = isTest
+        var newUser = User().apply {
+            this.username = username.trim { it <= ' ' }.lowercase(Locale.getDefault())
+            this.password = passwordEncoder.encode(pass)
+            this.isTest = isTest
+        }
         require(
             passwordEncoder.matches(
                 pass,

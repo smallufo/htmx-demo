@@ -3,6 +3,7 @@ package com.devhow.identity.user
 import com.devhow.identity.entity.User
 import jakarta.mail.AuthenticationFailedException
 import jakarta.servlet.http.HttpServletResponse
+import mu.KotlinLogging
 import org.springframework.stereotype.Controller
 import org.springframework.ui.ModelMap
 import org.springframework.web.bind.annotation.*
@@ -12,6 +13,8 @@ import java.util.*
 @Controller
 @RequestMapping("/public")
 class UserController(private val userService: UserService) {
+
+    private val logger = KotlinLogging.logger { }
 
     @RequestMapping(value = ["/ping"], produces = ["text/plain"])
     @ResponseBody
@@ -106,6 +109,7 @@ class UserController(private val userService: UserService) {
     @PostMapping("/sign-up")
     fun signUp(user: User, @RequestParam(name = "password-confirm") confirm: String, modelMap: ModelMap): String {
         try {
+            logger.info { "user.password = ${user.password} , confirm = $confirm" }
             if (user.password != confirm) throw IdentityServiceException(
                 IdentityServiceException.Reason.BAD_PASSWORD,
                 "Passwords do not match"
