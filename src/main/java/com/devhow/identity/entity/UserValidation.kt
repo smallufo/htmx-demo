@@ -9,37 +9,32 @@ import java.util.*
 
 @Entity(name = "user_validation")
 @Table(name = "user_validation")
-class UserValidation : Serializable {
-    @JvmField
-    var token: String? = null
-    @JvmField
-    var tokenIssue: Timestamp? = null
+data class UserValidation(
+    @Id
+    @Column(name = "user_id", nullable = false)
+    var user: Long? = null,
 
-    @JvmField
+    var token: String? = null,
+    var tokenIssue: Timestamp? = null,
+
     @Column(name = "pass_reset_token")
-    var passwordResetToken: String? = null
+    var passwordResetToken: String? = null,
 
-    @JvmField
     @Column(name = "pass_reset_issue")
-    var passwordResetIssue: Timestamp? = null
+    var passwordResetIssue: Timestamp? = null,
 
     @Column(name = "creation")
     @CreationTimestamp
-    var creation: Timestamp? = null
+    var creation: Timestamp? = null,
 
     @Version
     @Column(name = "entity_version", nullable = false)
     var version: Long? = null
 
-    @Id
-    @Column(name = "user_id", nullable = false)
-    var user: Long? = null
+) {
 
-    constructor(user: User) {
-        this.user = user.id
-    }
 
-    constructor()
+    constructor(user: User) : this(user.id, null, null, null, null, null, null)
 
     fun newToken() {
         token = UUID.randomUUID().toString()
