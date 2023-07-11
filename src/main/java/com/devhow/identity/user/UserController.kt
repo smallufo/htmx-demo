@@ -55,11 +55,11 @@ class UserController(private val userService: UserService) {
     fun updatePassword(
         @RequestParam(name = "key") key: String?, @RequestParam(name = "email") email: String?,
         @RequestParam(name = "password1") password1: String,
-        @RequestParam(name = "password2") password2: String?, modelMap: ModelMap,
+        @RequestParam(name = "password2") password2: String, modelMap: ModelMap,
         response: HttpServletResponse
     ): String {
         try {
-            if (password1.compareTo(password2!!) != 0) throw IdentityServiceException(
+            if (password1.compareTo(password2) != 0) throw IdentityServiceException(
                 IdentityServiceException.Reason.BAD_PASSWORD_RESET,
                 "Passwords don't match"
             )
