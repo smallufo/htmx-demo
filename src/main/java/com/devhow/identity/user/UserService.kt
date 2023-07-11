@@ -17,7 +17,6 @@ class UserService(
     private val passwordEncoder: PasswordEncoder,
     private val emailSenderService: EmailSenderService
 ) {
-    private val logger = KotlinLogging.logger { }
 
     @Value("\${external.server.address}")
     private lateinit var serverAddress: String
@@ -128,8 +127,6 @@ class UserService(
 
     @Throws(IdentityServiceException::class, AuthenticationFailedException::class)
     fun signUpUser(username: String, pass: String?, isTest: Boolean): User {
-
-        logger.info { "signUp , username = $username , pass = $pass , isTest = $isTest" }
 
         // First normalize user email
         checkEmailAddress(username)

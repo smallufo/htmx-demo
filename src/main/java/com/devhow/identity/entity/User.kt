@@ -32,6 +32,10 @@ data class User(
     var creation: Timestamp? = null
 ) {
 
+    constructor(username: String? , password: String? , isTest: Boolean) : this(null , username, password , null , isTest, null, null)
+
+    constructor(isTest: Boolean) : this(null, null, null, null, isTest, null, null)
+
     fun securityUser(): org.springframework.security.core.userdetails.User {
         val grantedAuthorities: MutableList<SimpleGrantedAuthority> = ArrayList()
         grantedAuthorities.add(SimpleGrantedAuthority(id.toString()))
