@@ -19,7 +19,7 @@ public class UserUtils {
 
     static public User setupUser(UserService userService, String pass) throws IdentityServiceException, AuthenticationFailedException {
         User user = userService.signUpUser("wiverson+" + random.nextInt() + "@gmail.com", pass, true);
-        Optional<User> confirmUser = userService.confirmUser(userService.validation(user).getToken());
+        Optional<User> confirmUser = userService.confirmUser(userService.validation(user).token);
 
         return userService.signIn(confirmUser.orElseThrow().username, pass);
     }

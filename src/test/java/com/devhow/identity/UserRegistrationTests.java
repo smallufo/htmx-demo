@@ -46,14 +46,14 @@ public class UserRegistrationTests {
 
         User signedUpUser = userService.signUpUser(username, pass, true);
 
-        assertThat(userService.validation(signedUpUser).getToken()).isNotNull();
-        assertThat(userService.validation(signedUpUser).getToken()).isNotEmpty();
+        assertThat(userService.validation(signedUpUser).token).isNotNull();
+        assertThat(userService.validation(signedUpUser).token).isNotEmpty();
         assertThat(signedUpUser.validated()).isFalse();
 
         String encryptedPass = signedUpUser.password;
         assertThat(encryptedPass).contains(BCRYPT_TOKEN);
 
-        Optional<User> confirmUser = userService.confirmUser(userService.validation(signedUpUser).getToken());
+        Optional<User> confirmUser = userService.confirmUser(userService.validation(signedUpUser).token);
 
         assertThat(confirmUser.isPresent()).isTrue();
         assertThat(confirmUser.get().validated()).isTrue();
@@ -78,7 +78,7 @@ public class UserRegistrationTests {
         user = userService.signUpUser(username, password, true);
         assertThat(user.validated()).isFalse();
 
-        Optional<User> confirmUser = userService.confirmUser(userService.validation(user).getToken());
+        Optional<User> confirmUser = userService.confirmUser(userService.validation(user).token);
         assertThat(confirmUser.isPresent()).isTrue();
         assertThat(confirmUser.get().validated()).isTrue();
 
@@ -154,11 +154,11 @@ public class UserRegistrationTests {
         cal.set(Calendar.DATE, cal.get(Calendar.DATE) - 5);
 
         UserValidation userValidation = userService.validation(user);
-        userValidation.setTokenIssue(new Timestamp(cal.getTimeInMillis()));
+        userValidation.tokenIssue = new Timestamp(cal.getTimeInMillis());
 
         userService.update(userValidation);
 
-        assertThrows(IdentityServiceException.class, () -> userService.confirmUser(userService.validation(user).getToken()));
+        assertThrows(IdentityServiceException.class, () -> userService.confirmUser(userService.validation(user).token));
 
         assertThat(userService.findUser(user.username).orElseThrow().validated()).isFalse();
     }
@@ -179,12 +179,12 @@ public class UserRegistrationTests {
         userService.signIn(user.username, startingPassword);
 
         // Confirm user with token
-        userService.confirmUser(userService.validation(user).getToken());
+        userService.confirmUser(userService.validation(user).token);
 
         userValidation = userService.requestPasswordReset(user.username);
 
-        assertThat(userValidation.getPasswordResetIssue()).isNotNull();
-        assertThat(userValidation.getPasswordResetToken()).isNotNull();
+        assertThat(userValidation.passwordResetIssue).isNotNull();
+        assertThat(userValidation.passwordResetToken).isNotNull();
 
         // password reset is requested for valid account but password reset token expired
 
@@ -197,7 +197,7 @@ public class UserRegistrationTests {
         assertThrows(IdentityServiceException.class, () -> userService.signIn(user.username, newPassword));
         user = userService.signIn(user.username, startingPassword);
 
-        user = userService.updatePassword(user.username, userValidation.getPasswordResetToken(), newPassword);
+        user = userService.updatePassword(user.username, userValidation.passwordResetToken, newPassword);
         assertThat(user.password).contains(BCRYPT_TOKEN);
 
         assertThrows(IdentityServiceException.class, () -> userService.signIn(user.username, startingPassword));

@@ -1,119 +1,61 @@
-package com.devhow.identity.entity;
+package com.devhow.identity.entity
 
-
-import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.io.Serializable;
-import java.sql.Timestamp;
-import java.util.Calendar;
-import java.util.UUID;
-
-import static com.devhow.identity.user.TimeUtilKt.now;
+import com.devhow.identity.user.now
+import jakarta.persistence.*
+import org.hibernate.annotations.CreationTimestamp
+import java.io.Serializable
+import java.sql.Timestamp
+import java.util.*
 
 @Entity(name = "user_validation")
 @Table(name = "user_validation")
-public class UserValidation implements Serializable {
-    private String token;
-    private Timestamp tokenIssue;
+class UserValidation : Serializable {
+    @JvmField
+    var token: String? = null
+    @JvmField
+    var tokenIssue: Timestamp? = null
 
+    @JvmField
     @Column(name = "pass_reset_token")
-    private String passwordResetToken;
+    var passwordResetToken: String? = null
 
+    @JvmField
     @Column(name = "pass_reset_issue")
-    private Timestamp passwordResetIssue;
+    var passwordResetIssue: Timestamp? = null
 
     @Column(name = "creation")
     @CreationTimestamp
-    private Timestamp creation;
+    var creation: Timestamp? = null
 
     @Version
     @Column(name = "entity_version", nullable = false)
-    private Long version;
+    var version: Long? = null
+
     @Id
     @Column(name = "user_id", nullable = false)
-    private Long user;
+    var user: Long? = null
 
-    public UserValidation(User user) {
-        this.user = user.id;
+    constructor(user: User) {
+        this.user = user.id
     }
 
-    public UserValidation() {
+    constructor()
 
+    fun newToken() {
+        token = UUID.randomUUID().toString()
+        tokenIssue = Timestamp(Calendar.getInstance().time.time)
     }
 
-    public Long getVersion() {
-        return version;
+    fun tokenIsCurrent(): Boolean {
+        return Math.abs(tokenIssue!!.time - now().time) < 1000 * 60 * 60 * 24
     }
 
-    public void setVersion(Long version) {
-        this.version = version;
+    fun passwordValidationIsCurrent(): Boolean {
+        return Math.abs(passwordResetIssue!!.time - now().time) < 1000 * 60 * 5
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public void newToken() {
-        setToken(UUID.randomUUID().toString());
-        setTokenIssue(new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()));
-    }
-
-    public Timestamp getTokenIssue() {
-        return tokenIssue;
-    }
-
-    public void setTokenIssue(Timestamp tokenIssue) {
-        this.tokenIssue = tokenIssue;
-    }
-
-    public boolean tokenIsCurrent() {
-        return Math.abs(getTokenIssue().getTime() - now().getTime()) < 1000 * 60 * 60 * 24;
-    }
-
-    public boolean passwordValidationIsCurrent() {
-        return Math.abs(getPasswordResetIssue().getTime() - now().getTime()) < 1000 * 60 * 5;
-    }
-
-    public Long getUser() {
-        return user;
-    }
-
-    public void setUser(Long user) {
-        this.user = user;
-    }
-
-    public String getPasswordResetToken() {
-        return passwordResetToken;
-    }
-
-    public void setPasswordResetToken(String passwordResetToken) {
-        this.passwordResetToken = passwordResetToken;
-    }
-
-    public Timestamp getPasswordResetIssue() {
-        return passwordResetIssue;
-    }
-
-    public void setPasswordResetIssue(Timestamp passwordResetIssue) {
-        this.passwordResetIssue = passwordResetIssue;
-    }
-
-    public void newPasswordResetToken() {
-        setPasswordResetToken(UUID.randomUUID().toString());
-        setPasswordResetIssue(new java.sql.Timestamp(Calendar.getInstance().getTime().getTime()));
-    }
-
-
-    public Timestamp getCreation() {
-        return creation;
-    }
-
-    public void setCreation(Timestamp creation) {
-        this.creation = creation;
+    fun newPasswordResetToken() {
+        passwordResetToken = UUID.randomUUID().toString()
+        passwordResetIssue = Timestamp(Calendar.getInstance().time.time)
     }
 }
