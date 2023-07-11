@@ -83,13 +83,13 @@ public class WebSecurityConfigTests {
 
         User user = UserUtils.setupUser(userService, password);
 
-        assertThat(passwordEncoder.matches(password, user.getPassword())).isTrue();
+        assertThat(passwordEncoder.matches(password, user.password)).isTrue();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.setAccept(Lists.list(MediaType.TEXT_HTML, MediaType.APPLICATION_XHTML_XML));
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
-        parameters.add("username", user.getUsername());
+        parameters.add("username", user.username);
         parameters.add("password", password);
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(parameters, headers);
 
@@ -107,13 +107,13 @@ public class WebSecurityConfigTests {
 
         User user = UserUtils.setupUser(userService, password);
 
-        assertThat(passwordEncoder.matches(password, user.getPassword())).isTrue();
+        assertThat(passwordEncoder.matches(password, user.password)).isTrue();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
-        parameters.add("username", user.getUsername());
+        parameters.add("username", user.username);
         parameters.add("password", "garbage");
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(parameters, headers);
 

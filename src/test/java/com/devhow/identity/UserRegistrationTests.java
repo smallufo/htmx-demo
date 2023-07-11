@@ -50,21 +50,21 @@ public class UserRegistrationTests {
         assertThat(userService.validation(signedUpUser).getToken()).isNotEmpty();
         assertThat(signedUpUser.validated()).isFalse();
 
-        String encryptedPass = signedUpUser.getPassword();
+        String encryptedPass = signedUpUser.password;
         assertThat(encryptedPass).contains(BCRYPT_TOKEN);
 
         Optional<User> confirmUser = userService.confirmUser(userService.validation(signedUpUser).getToken());
 
         assertThat(confirmUser.isPresent()).isTrue();
         assertThat(confirmUser.get().validated()).isTrue();
-        assertThat(confirmUser.get().getPassword()).isEqualTo(encryptedPass);
+        assertThat(confirmUser.get().password).isEqualTo(encryptedPass);
 
-        User secondFormUser = new User(user.getUsername(), pass, true);
-        assertThat(secondFormUser.getPassword()).doesNotContain(BCRYPT_TOKEN);
+        User secondFormUser = new User(user.username, pass, true);
+        assertThat(secondFormUser.password).doesNotContain(BCRYPT_TOKEN);
 
         User signIn = userService.signIn(username, pass);
         assertThat(signIn).isNotNull();
-        assertThat(signIn.getPassword()).contains(BCRYPT_TOKEN);
+        assertThat(signIn.password).contains(BCRYPT_TOKEN);
     }
 
     /**
@@ -82,7 +82,7 @@ public class UserRegistrationTests {
         assertThat(confirmUser.isPresent()).isTrue();
         assertThat(confirmUser.get().validated()).isTrue();
 
-        User secondSignup = new User(user.getUsername(), user.getPassword(), true);
+        User secondSignup = new User(user.username, user.password, true);
 
         // This is the key flow here - if a user tries to sign up again but is already confirmed,
         // the returned user will show up as isEnabled.
@@ -103,7 +103,7 @@ public class UserRegistrationTests {
 
         assertThrows(IdentityServiceException.class, () -> userService.confirmUser("garbage token"));
 
-        user = userService.findUser(user.getUsername()).orElseThrow();
+        user = userService.findUser(user.username).orElseThrow();
         assertThat(user.validated()).isFalse();
     }
 
@@ -160,7 +160,7 @@ public class UserRegistrationTests {
 
         assertThrows(IdentityServiceException.class, () -> userService.confirmUser(userService.validation(user).getToken()));
 
-        assertThat(userService.findUser(user.getUsername()).orElseThrow().validated()).isFalse();
+        assertThat(userService.findUser(user.username).orElseThrow().validated()).isFalse();
     }
 
     @Test
@@ -169,38 +169,38 @@ public class UserRegistrationTests {
         String username = "wiverson+" + random.nextInt() + "@gmail.com";
 
         // password reset is requested but email doesn't exist
-        assertThrows(IdentityServiceException.class, () -> userValidation = userService.requestPasswordReset(user.getUsername()));
+        assertThrows(IdentityServiceException.class, () -> userValidation = userService.requestPasswordReset(user.username));
 
         user = userService.signUpUser(username, startingPassword, true);
 
         // password reset is requested but token has not been validated
-        assertThrows(IdentityServiceException.class, () -> userService.requestPasswordReset(user.getUsername()));
+        assertThrows(IdentityServiceException.class, () -> userService.requestPasswordReset(user.username));
 
-        userService.signIn(user.getUsername(), startingPassword);
+        userService.signIn(user.username, startingPassword);
 
         // Confirm user with token
         userService.confirmUser(userService.validation(user).getToken());
 
-        userValidation = userService.requestPasswordReset(user.getUsername());
+        userValidation = userService.requestPasswordReset(user.username);
 
         assertThat(userValidation.getPasswordResetIssue()).isNotNull();
         assertThat(userValidation.getPasswordResetToken()).isNotNull();
 
         // password reset is requested for valid account but password reset token expired
 
-        userService.requestPasswordReset(user.getUsername());
+        userService.requestPasswordReset(user.username);
 
         UserValidation userValidation = userService.validation(user);
 
         String newPassword = "this-is-a-fancy-new-password";
 
-        assertThrows(IdentityServiceException.class, () -> userService.signIn(user.getUsername(), newPassword));
-        user = userService.signIn(user.getUsername(), startingPassword);
+        assertThrows(IdentityServiceException.class, () -> userService.signIn(user.username, newPassword));
+        user = userService.signIn(user.username, startingPassword);
 
-        user = userService.updatePassword(user.getUsername(), userValidation.getPasswordResetToken(), newPassword);
-        assertThat(user.getPassword()).contains(BCRYPT_TOKEN);
+        user = userService.updatePassword(user.username, userValidation.getPasswordResetToken(), newPassword);
+        assertThat(user.password).contains(BCRYPT_TOKEN);
 
-        assertThrows(IdentityServiceException.class, () -> userService.signIn(user.getUsername(), startingPassword));
-        userService.signIn(user.getUsername(), newPassword);
+        assertThrows(IdentityServiceException.class, () -> userService.signIn(user.username, startingPassword));
+        userService.signIn(user.username, newPassword);
     }
 }

@@ -110,7 +110,7 @@ class UserController(private val userService: UserService) {
                 IdentityServiceException.Reason.BAD_PASSWORD,
                 "Passwords do not match"
             )
-            userService.signUpUser(user.username, user.password, false)
+            userService.signUpUser(user.username!!, user.password, false)
             return "redirect:/public/sign-in?message=Check%20your%20email%20to%20confirm%20your%20account%21"
         } catch (e: IdentityServiceException) {
             modelMap.addAttribute(ERROR, e.message)

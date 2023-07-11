@@ -35,7 +35,7 @@ public class UserValidation implements Serializable {
     private Long user;
 
     public UserValidation(User user) {
-        this.user = user.getId();
+        this.user = user.id;
     }
 
     public UserValidation() {

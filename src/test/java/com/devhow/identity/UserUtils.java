@@ -21,6 +21,6 @@ public class UserUtils {
         User user = userService.signUpUser("wiverson+" + random.nextInt() + "@gmail.com", pass, true);
         Optional<User> confirmUser = userService.confirmUser(userService.validation(user).getToken());
 
-        return userService.signIn(confirmUser.orElseThrow().getUsername(), pass);
+        return userService.signIn(confirmUser.orElseThrow().username, pass);
     }
 }
