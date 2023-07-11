@@ -1,38 +1,32 @@
-package com.devhow.identity.user;
+package com.devhow.identity.user
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
+import mu.KotlinLogging
+import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.mail.SimpleMailMessage
+import org.springframework.mail.javamail.JavaMailSender
+import org.springframework.scheduling.annotation.Async
+import org.springframework.stereotype.Service
 
 @Service
-public class EmailSenderService {
+open class EmailSenderService(private val javaMailSender: JavaMailSender) {
 
-    private final Logger logger = LoggerFactory.getLogger(EmailSenderService.class);
+    private val logger = KotlinLogging.logger { }
 
-    private final JavaMailSender javaMailSender;
-
-    @Value("${mail.test:false}")
-    private Boolean mailTest = false;
-
-    public EmailSenderService(JavaMailSender javaMailSender) {
-        this.javaMailSender = javaMailSender;
-    }
+    @Value("\${mail.test:false}")
+    private var mailTest = false
 
     @Async
-    public void sendEmail(SimpleMailMessage email) {
+    open fun sendEmail(email: SimpleMailMessage) {
         if (mailTest) {
-            logger.error(email.getText());
+            logger.error(email.text)
         } else {
             try {
-                javaMailSender.send(email);
-            } catch (Exception e) {
-                logger.error("Unable to send email! Future emails will be logged - no retry!", e);
-                mailTest = true;
-                logger.error(email.getText());
+                javaMailSender.send(email)
+            } catch (e: Exception) {
+                logger.error("Unable to send email! Future emails will be logged - no retry!", e)
+                mailTest = true
+                logger.error(email.text)
             }
         }
     }
