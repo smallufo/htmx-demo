@@ -1,141 +1,138 @@
-package com.devhow.identity.user;
+package com.devhow.identity.user
 
-import com.devhow.identity.entity.User;
-import jakarta.mail.AuthenticationFailedException;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.view.RedirectView;
-
-import java.util.Date;
-
-import static com.devhow.identity.user.IdentityServiceException.Reason.BAD_PASSWORD_RESET;
-import static com.devhow.identity.user.IdentityServiceException.Reason.BAD_TOKEN;
+import com.devhow.identity.entity.User
+import jakarta.mail.AuthenticationFailedException
+import jakarta.servlet.http.HttpServletResponse
+import org.springframework.stereotype.Controller
+import org.springframework.ui.ModelMap
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.view.RedirectView
+import java.util.*
 
 @Controller
 @RequestMapping("/public")
-public class UserController {
+class UserController(private val userService: UserService) {
 
-    static final String MESSAGE = "message";
-    static final String ERROR = "error";
-    private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
-
-    @RequestMapping(value = "/ping", produces = "text/plain")
+    @RequestMapping(value = ["/ping"], produces = ["text/plain"])
     @ResponseBody
-    String ping(@RequestParam(name = "debug", required = false) String debug) {
-        if (debug != null && debug.length() > 0) {
-            return "OK " + new Date() + " " + debug;
-        }
-        return "OK " + new Date();
+    fun ping(@RequestParam(name = "debug", required = false) debug: String?): String {
+        return if (debug != null && debug.length > 0) {
+            "OK " + Date() + " " + debug
+        } else "OK " + Date()
     }
 
-    @RequestMapping(path = "/logout")
-    public RedirectView logout(HttpServletResponse response) {
-        response.addHeader("HX-Redirect", "/");
-        return new RedirectView("/?message=logout");
+    @RequestMapping(path = ["/logout"])
+    fun logout(response: HttpServletResponse): RedirectView {
+        response.addHeader("HX-Redirect", "/")
+        return RedirectView("/?message=logout")
     }
 
     @PostMapping("/do-sign-in")
-    public String doSignIn(@RequestParam(name = "error", defaultValue = "") String error, ModelMap modelMap) {
-        if (error.length() > 0)
-            modelMap.addAttribute(ERROR, error);
-
-        return "index";
+    fun doSignIn(@RequestParam(name = "error", defaultValue = "") error: String, modelMap: ModelMap): String {
+        if (error.length > 0) modelMap.addAttribute(ERROR, error)
+        return "index"
     }
 
     @GetMapping("/sign-in")
-    String signIn(@RequestParam(name = "error", defaultValue = "") String error,
-                  @RequestParam(name = "message", defaultValue = "") String message, ModelMap modelMap,
-                  HttpServletResponse response) {
-        if (message.length() > 0)
-            modelMap.addAttribute(MESSAGE, message);
-        if (error.length() > 0)
-            modelMap.addAttribute(ERROR, "Invalid Login");
-        response.addHeader("HX-Redirect", "/");
-        return "identity/sign-in";
+    fun signIn(
+        @RequestParam(name = "error", defaultValue = "") error: String,
+        @RequestParam(name = "message", defaultValue = "") message: String, modelMap: ModelMap,
+        response: HttpServletResponse
+    ): String {
+        if (message.length > 0) modelMap.addAttribute(MESSAGE, message)
+        if (error.length > 0) modelMap.addAttribute(ERROR, "Invalid Login")
+        response.addHeader("HX-Redirect", "/")
+        return "identity/sign-in"
     }
 
     @GetMapping("/password-reset")
-    String passwordResetKey(@RequestParam(name = "token") String key, ModelMap modelMap) {
-        modelMap.put("key", key);
-        return "identity/password-reset";
+    fun passwordResetKey(@RequestParam(name = "token") key: String, modelMap: ModelMap): String {
+        modelMap["key"] = key
+        return "identity/password-reset"
     }
 
     @PostMapping("/password-reset")
-    String updatePassword(@RequestParam(name = "key") String key, @RequestParam(name = "email") String email,
-                          @RequestParam(name = "password1") String password1,
-                          @RequestParam(name = "password2") String password2, ModelMap modelMap,
-                          HttpServletResponse response) {
-
+    fun updatePassword(
+        @RequestParam(name = "key") key: String?, @RequestParam(name = "email") email: String?,
+        @RequestParam(name = "password1") password1: String,
+        @RequestParam(name = "password2") password2: String?, modelMap: ModelMap,
+        response: HttpServletResponse
+    ): String {
         try {
-            if (password1.compareTo(password2) != 0)
-                throw new IdentityServiceException(BAD_PASSWORD_RESET, "Passwords don't match");
-            userService.updatePassword(email, key, password1);
-            return signIn("", "Password successfully updated.", modelMap, response);
-        } catch (IdentityServiceException e) {
-            modelMap.addAttribute(MESSAGE, e.getMessage());
+            if (password1.compareTo(password2!!) != 0) throw IdentityServiceException(
+                IdentityServiceException.Reason.BAD_PASSWORD_RESET,
+                "Passwords don't match"
+            )
+            userService.updatePassword(email, key, password1)
+            return signIn("", "Password successfully updated.", modelMap, response)
+        } catch (e: IdentityServiceException) {
+            modelMap.addAttribute(MESSAGE, e.message)
         }
-        return signIn("", "", modelMap, response);
+        return signIn("", "", modelMap, response)
     }
 
     @GetMapping("/forgot-password")
-    String forgotPassword() {
-        return "identity/forgot-password";
+    fun forgotPassword(): String {
+        return "identity/forgot-password"
     }
 
     @PostMapping("/forgot-password")
-    String resetPassword(@RequestParam(name = "email", defaultValue = "") String email,
-                         ModelMap modelMap, HttpServletResponse response) {
-
+    fun resetPassword(
+        @RequestParam(name = "email", defaultValue = "") email: String?,
+        modelMap: ModelMap, response: HttpServletResponse
+    ): String {
         try {
-            userService.requestPasswordReset(email);
-            return signIn("", "Check your email for password reset link.", modelMap, response);
-        } catch (IdentityServiceException e) {
-            if (e.getReason().equals(BAD_TOKEN))
-                modelMap.addAttribute(MESSAGE, "Unknown Token");
-            else
-                modelMap.addAttribute(MESSAGE, e.getMessage());
-        } catch (AuthenticationFailedException authenticationFailedException) {
-            modelMap.addAttribute(MESSAGE, "Unable to send email right now...");
+            userService.requestPasswordReset(email)
+            return signIn("", "Check your email for password reset link.", modelMap, response)
+        } catch (e: IdentityServiceException) {
+            if (e.reason == IdentityServiceException.Reason.BAD_TOKEN) modelMap.addAttribute(
+                MESSAGE,
+                "Unknown Token"
+            ) else modelMap.addAttribute(
+                MESSAGE, e.message
+            )
+        } catch (authenticationFailedException: AuthenticationFailedException) {
+            modelMap.addAttribute(MESSAGE, "Unable to send email right now...")
         }
-
-        return "identity/forgot-password";
+        return "identity/forgot-password"
     }
 
-
     @GetMapping("/sign-up")
-    String signUpPage(User user) {
-        return "identity/sign-up";
+    fun signUpPage(user: User?): String {
+        return "identity/sign-up"
     }
 
     @PostMapping("/sign-up")
-    String signUp(User user, @RequestParam(name = "password-confirm") String confirm, ModelMap modelMap) {
+    fun signUp(user: User, @RequestParam(name = "password-confirm") confirm: String, modelMap: ModelMap): String {
         try {
-            if (!user.getPassword().equals(confirm))
-                throw new IdentityServiceException(IdentityServiceException.Reason.BAD_PASSWORD, "Passwords do not match");
-            userService.signUpUser(user.getUsername(), user.getPassword(), false);
-            return "redirect:/public/sign-in?message=Check%20your%20email%20to%20confirm%20your%20account%21";
-        } catch (IdentityServiceException e) {
-            modelMap.addAttribute(ERROR, e.getMessage());
-        } catch (AuthenticationFailedException authenticationFailedException) {
-            modelMap.addAttribute(ERROR, "Can't send email - email server is down/unreachable.");
-            authenticationFailedException.printStackTrace();
+            if (user.password != confirm) throw IdentityServiceException(
+                IdentityServiceException.Reason.BAD_PASSWORD,
+                "Passwords do not match"
+            )
+            userService.signUpUser(user.username, user.password, false)
+            return "redirect:/public/sign-in?message=Check%20your%20email%20to%20confirm%20your%20account%21"
+        } catch (e: IdentityServiceException) {
+            modelMap.addAttribute(ERROR, e.message)
+        } catch (authenticationFailedException: AuthenticationFailedException) {
+            modelMap.addAttribute(ERROR, "Can't send email - email server is down/unreachable.")
+            authenticationFailedException.printStackTrace()
         }
-        return "identity/sign-up";
+        return "identity/sign-up"
     }
 
     @GetMapping("/sign-up/confirm")
-    String confirmMail(@RequestParam("token") String token, ModelMap modelMap, HttpServletResponse response) {
-        try {
-            userService.confirmUser(token).orElseThrow(() -> new IdentityServiceException(BAD_TOKEN, null));
-            return signIn("", "Email Address Confirmed!", modelMap, response);
-        } catch (IdentityServiceException e) {
-            return signIn("", "Unknown Token", modelMap, response);
+    fun confirmMail(@RequestParam("token") token: String?, modelMap: ModelMap, response: HttpServletResponse): String {
+        return try {
+            userService.confirmUser(token)
+                .orElseThrow { IdentityServiceException(IdentityServiceException.Reason.BAD_TOKEN, null) }
+            signIn("", "Email Address Confirmed!", modelMap, response)
+        } catch (e: IdentityServiceException) {
+            signIn("", "Unknown Token", modelMap, response)
         }
+    }
+
+    companion object {
+        const val MESSAGE = "message"
+        const val ERROR = "error"
     }
 }
