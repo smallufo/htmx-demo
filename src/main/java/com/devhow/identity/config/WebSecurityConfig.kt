@@ -25,36 +25,38 @@ open class WebSecurityConfig(
 
     @Bean
     open fun filterChain(http: HttpSecurity): SecurityFilterChain {
-        // @formatter:off
-    http.csrf().disable()
-        
-                // Only allow frames if using h2 as the database
-        if (activeProfile.contains("h2"))http.headers().frameOptions().disable()
-        http.authorizeHttpRequests()
-        .requestMatchers("/**/*.html").denyAll()
-        .requestMatchers("/public/**", "/webjars/**", "/", "/logout", "/api/**", "/login", "/h2-console/**")
-        .permitAll()
-        .anyRequest()
-        .authenticated()
-        .and()
-        .formLogin()
-        .loginPage("/public/sign-in").permitAll()
-        .loginProcessingUrl("/public/do-sign-in") //                    .defaultSuccessUrl("/")
-        .failureUrl("/public/sign-in?error=true")
-        .usernameParameter("username")
-        .passwordParameter("password") //.failureHandler(userService)
- //.successHandler(userService)
-        .and()
-        .logout()
-        .logoutRequestMatcher(AntPathRequestMatcher("/public/logout"))
-        .clearAuthentication(true)
-        .invalidateHttpSession(true)
-        .deleteCookies("JSESSIONID")
+
+        if (activeProfile.contains("h2")) {
+            http.headers { h ->
+                h.frameOptions { f ->
+                    f.disable()
+                }
+            }
+        }
+
+        http.csrf { it.disable() }
+            .authorizeHttpRequests { auth ->
+                auth
+                    .requestMatchers("/**/*.html").denyAll()
+                    .requestMatchers("/public/**", "/webjars/**", "/", "/logout", "/api/**", "/login", "/h2-console/**")
+                    .permitAll()
+                    .anyRequest().authenticated()
+            }.formLogin {
+                it
+                    .loginPage("/public/sign-in").permitAll()
+                    .loginProcessingUrl("/public/do-sign-in")
+                    .failureUrl("/public/sign-in?error=true")
+                    .usernameParameter("username")
+                    .passwordParameter("password")
+            }.logout {
+                it
+                    .logoutRequestMatcher(AntPathRequestMatcher("/public/logout"))
+                    .clearAuthentication(true)
+                    .invalidateHttpSession(true)
+                    .deleteCookies("JSESSIONID")
+            }
+
         return http.build()
-    
-//                .and()
-//                    .anonymous();
-        // @formatter:on
     }
 
     @Autowired
