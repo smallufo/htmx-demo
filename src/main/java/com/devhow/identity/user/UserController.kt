@@ -53,7 +53,8 @@ class UserController(private val userService: UserService) {
 
     @PostMapping("/password-reset")
     fun updatePassword(
-        @RequestParam(name = "key") key: String?, @RequestParam(name = "email") email: String?,
+        @RequestParam(name = "key") key: String,
+        @RequestParam(name = "email") email: String,
         @RequestParam(name = "password1") password1: String,
         @RequestParam(name = "password2") password2: String, modelMap: ModelMap,
         response: HttpServletResponse
@@ -78,7 +79,7 @@ class UserController(private val userService: UserService) {
 
     @PostMapping("/forgot-password")
     fun resetPassword(
-        @RequestParam(name = "email", defaultValue = "") email: String?,
+        @RequestParam(name = "email", defaultValue = "") email: String,
         modelMap: ModelMap, response: HttpServletResponse
     ): String {
         try {
@@ -121,7 +122,7 @@ class UserController(private val userService: UserService) {
     }
 
     @GetMapping("/sign-up/confirm")
-    fun confirmMail(@RequestParam("token") token: String?, modelMap: ModelMap, response: HttpServletResponse): String {
+    fun confirmMail(@RequestParam("token") token: String, modelMap: ModelMap, response: HttpServletResponse): String {
         return try {
             userService.confirmUser(token)
                 .orElseThrow { IdentityServiceException(IdentityServiceException.Reason.BAD_TOKEN, null) }
