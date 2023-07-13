@@ -15,9 +15,11 @@ class ClickToEdit : AbstractController() {
 
   private val logger = KotlinLogging.logger { }
 
+  private val demoContact = Contact.demoContact()
+
   @GetMapping
   fun start(model: Model): String {
-    model.addAttribute("contact", Contact.demoContact())
+    model.addAttribute("contact", demoContact)
     return "click-to-edit"
   }
 
@@ -29,9 +31,15 @@ class ClickToEdit : AbstractController() {
   }
 
   @PostMapping("/commit")
-  fun editPost(contact: Contact?, model: Model): String {
+  fun editPost(contact: Contact, model: Model): String {
     model.addAttribute("contact", contact)
     logger.info { "editPost , contact = $contact" }
+    demoContact.apply {
+      firstName = contact.firstName
+      lastName = contact.lastName
+      email = contact.email
+    }
+
     return "click-to-edit-default"
   }
 }
