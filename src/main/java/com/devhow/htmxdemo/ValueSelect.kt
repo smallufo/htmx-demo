@@ -16,19 +16,7 @@ import java.util.*
 @Controller
 @RequestMapping("/public/value-select")
 class ValueSelect : AbstractController() {
-    /**
-     * IntelliJ has a plugin that supports handlebars inline (and file template) syntax highlighting.
-     *
-     *
-     * https://plugins.jetbrains.com/plugin/6884-handlebars-mustache
-     */
-    @Language("handlebars")
-    private val handleBarTemplate = """
-                    {{#each}}
-                    <option value="{{this}}">{{{this}}}</option>
-                    {{/each}}
-                    
-                    """.trimIndent()
+
 
     private val featureMap = mapOf(
         "java8" to arrayOf("lambdas", "collections", "streams"),
@@ -46,29 +34,24 @@ class ValueSelect : AbstractController() {
         "java20" to arrayOf("scoped values", "record patterns")
     )
 
-    //    private val java8 = arrayOf("lambdas", "collections", "streams")
-//    private val java9 = arrayOf("collections", "streams", "optionals", "interfaces", "jshell")
-//    private val java10 = arrayOf("var")
-//    private val java11 = arrayOf("strings", "scripts", "lambda var")
-//    private val java12 = arrayOf("unicode 11")
-//    private val java13 = arrayOf("unicode 12")
-//    private val java14 = arrayOf("switch", "better null pointer error messages")
-//    private val java15 = arrayOf("text blocks", "Z garbage collector")
-//    private val java16 = arrayOf("sockets", "records")
-//    private val java17 = arrayOf("pattern matching for switch", "sealed classes", "foreign function and memory api")
-//    private val java18 = arrayOf("UTF-8 by default", "jwebserver")
-//    private val java19 = arrayOf("virtual threads", "structured concurrency", "vector api")
-//    private val java20 = arrayOf("scoped values", "record patterns")
-    private lateinit var template: Template
+    /**
+     * IntelliJ has a plugin that supports handlebars inline (and file template) syntax highlighting.
+     *
+     *
+     * https://plugins.jetbrains.com/plugin/6884-handlebars-mustache
+     */
+    @Language("handlebars")
+    private val handleBarTemplate = """
+                    {{#each}}
+                    <option value="{{this}}">{{{this}}}</option>
+                    {{/each}}
+                    """.trimIndent()
 
-    init {
+    private val template: Template by lazy {
         val handlebars = Handlebars()
-        try {
-            template = handlebars.compileInline(handleBarTemplate)
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
+        handlebars.compileInline(handleBarTemplate)
     }
+
 
     @GetMapping
     fun start(model: Model): String {
@@ -77,9 +60,6 @@ class ValueSelect : AbstractController() {
 
     @GetMapping(value = ["/models"], produces = [MediaType.TEXT_HTML_VALUE])
     @ResponseBody
-    @Throws(
-        IOException::class
-    )
     fun models(@RequestParam("make") make: String): String {
 
         val arrays = featureMap.getOrElse(make) {
