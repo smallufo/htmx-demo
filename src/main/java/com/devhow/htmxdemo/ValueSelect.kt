@@ -29,20 +29,37 @@ class ValueSelect : AbstractController() {
                     {{/each}}
                     
                     """.trimIndent()
-    private val java8 = arrayOf("lambdas", "collections", "streams")
-    private val java9 = arrayOf("collections", "streams", "optionals", "interfaces", "jshell")
-    private val java10 = arrayOf("var")
-    private val java11 = arrayOf("strings", "scripts", "lambda var")
-    private val java12 = arrayOf("unicode 11")
-    private val java13 = arrayOf("unicode 12")
-    private val java14 = arrayOf("switch", "better null pointer error messages")
-    private val java15 = arrayOf("text blocks", "Z garbage collector")
-    private val java16 = arrayOf("sockets", "records")
-    private val java17 = arrayOf("pattern matching for switch", "sealed classes", "foreign function and memory api")
-    private val java18 = arrayOf("UTF-8 by default", "jwebserver")
-    private val java19 = arrayOf("virtual threads", "structured concurrency", "vector api")
-    private val java20 = arrayOf("scoped values", "record patterns")
-    var template: Template? = null
+
+    private val featureMap = mapOf(
+        "java8" to arrayOf("lambdas", "collections", "streams"),
+        "java9" to arrayOf("collections", "streams", "optionals", "interfaces", "jshell"),
+        "java10" to arrayOf("var"),
+        "java11" to arrayOf("strings", "scripts", "lambda var"),
+        "java12" to arrayOf("unicode 11"),
+        "java13" to arrayOf("unicode 12"),
+        "java14" to arrayOf("switch", "better null pointer error messages"),
+        "java15" to arrayOf("text blocks", "Z garbage collector"),
+        "java16" to arrayOf("sockets", "records"),
+        "java17" to arrayOf("pattern matching for switch", "sealed classes", "foreign function and memory api"),
+        "java18" to arrayOf("UTF-8 by default", "jwebserver"),
+        "java19" to arrayOf("virtual threads", "structured concurrency", "vector api"),
+        "java20" to arrayOf("scoped values", "record patterns")
+    )
+
+    //    private val java8 = arrayOf("lambdas", "collections", "streams")
+//    private val java9 = arrayOf("collections", "streams", "optionals", "interfaces", "jshell")
+//    private val java10 = arrayOf("var")
+//    private val java11 = arrayOf("strings", "scripts", "lambda var")
+//    private val java12 = arrayOf("unicode 11")
+//    private val java13 = arrayOf("unicode 12")
+//    private val java14 = arrayOf("switch", "better null pointer error messages")
+//    private val java15 = arrayOf("text blocks", "Z garbage collector")
+//    private val java16 = arrayOf("sockets", "records")
+//    private val java17 = arrayOf("pattern matching for switch", "sealed classes", "foreign function and memory api")
+//    private val java18 = arrayOf("UTF-8 by default", "jwebserver")
+//    private val java19 = arrayOf("virtual threads", "structured concurrency", "vector api")
+//    private val java20 = arrayOf("scoped values", "record patterns")
+    private lateinit var template: Template
 
     init {
         val handlebars = Handlebars()
@@ -64,19 +81,11 @@ class ValueSelect : AbstractController() {
         IOException::class
     )
     fun models(@RequestParam("make") make: String): String {
-        if ("java8" == make) return template!!.apply(java8)
-        if ("java9" == make) return template!!.apply(java9)
-        if ("java10" == make) return template!!.apply(java10)
-        if ("java11" == make) return template!!.apply(java11)
-        if ("java12" == make) return template!!.apply(java12)
-        if ("java13" == make) return template!!.apply(java13)
-        if ("java14" == make) return template!!.apply(java14)
-        if ("java15" == make) return template!!.apply(java15)
-        if ("java16" == make) return template!!.apply(java16)
-        if ("java17" == make) return template!!.apply(java17)
-        if ("java18" == make) return template!!.apply(java18)
-        if ("java19" == make) return template!!.apply(java19)
-        if ("java20" == make) return template!!.apply(java20)
-        throw IllegalArgumentException("Unknown make")
+
+        val arrays = featureMap.getOrElse(make) {
+            throw IllegalArgumentException("Unknown make")
+        }
+
+        return template.apply(arrays)
     }
 }
