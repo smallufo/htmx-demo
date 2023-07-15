@@ -27,9 +27,14 @@ class DeleteRow {
                  <td>%s</td>
                  <td>%s</td>
                  <td>
-                    <button class="btn btn-danger" hx-delete="/public/delete-row/delete/%s">
-                      Delete
-                    </button>
+                     <button class="btn btn-danger"
+                             hx-target="closest tr"
+                             hx-swap="outerHTML swap:1s" 
+                             hx-trigger="click"
+                             hx-delete="/public/delete-row/delete/%s"
+                             >
+                         Delete
+                     </button>
                  </td>
              </tr>
             """.trimIndent()

@@ -7,11 +7,17 @@
     <!--/* Used only for editing in Pinegrow -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css">
     <!--*/-->
+    <style>
+        tr.htmx-swapping td {
+            opacity: 0;
+            transition: opacity 1s ease-out;
+        }
+    </style>
 </head>
 <body>
 <section layout:fragment="content">
     <div class="container alert alert-secondary" role="alert">
-        <p>Delete Row</p>
+        A tweaked version of the <a href="https://htmx.org/examples/delete-row/" target="_blank">HTMX Delete Row</a>
     </div>
     <div class="container">
         <table hx-indicator=".htmx-indicator" hx-get="/public/delete-row/contacts" hx-trigger="revealed"
