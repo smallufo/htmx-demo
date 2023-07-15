@@ -12,17 +12,15 @@ data class Contact(var firstName: String?, var lastName: String?, var email: Str
 
         private val faker = Faker()
         fun randomContacts(count: Int): List<Contact> {
-            val result: MutableList<Contact> = ArrayList()
 
-            for (i in 0 until count) {
-                val contact = Contact(
+            return (1..count).map {
+                Contact(
                     faker.name().firstName(),
                     faker.name().firstName(),
                     faker.internet().safeEmailAddress()
                 )
-                result.add(contact)
-            }
-            return result
+            }.toList()
+
         }
     }
 }

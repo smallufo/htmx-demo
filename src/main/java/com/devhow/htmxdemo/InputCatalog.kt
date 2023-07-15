@@ -3,6 +3,7 @@ package com.devhow.htmxdemo
 import j2html.TagCreator
 import j2html.tags.ContainerTag
 import j2html.tags.specialized.PTag
+import mu.KotlinLogging
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -153,5 +154,9 @@ class InputCatalog : AbstractController() {
         val p = TagCreator.p("Form submitted!")
         for (s in parameters.keys) p.with(TagCreator.join(TagCreator.br(), s + ":" + parameters[s]))
         return p.render()
+    }
+
+    companion object {
+        val logger = KotlinLogging.logger { }
     }
 }
