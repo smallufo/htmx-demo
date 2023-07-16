@@ -36,15 +36,8 @@ class ToDoList : AbstractController() {
 
     @GetMapping
     fun start(model: Model): String {
-        //model.addAttribute("item", "Get Stuff Done")
         model.addAttribute("todos", todos)
         return "todo"
-    }
-
-    @DeleteMapping(path = ["/delete"], produces = [MediaType.TEXT_HTML_VALUE])
-    @ResponseBody
-    fun delete(): String {
-        return ""
     }
 
     @DeleteMapping(path = ["/delete/{id}"], produces = [MediaType.TEXT_HTML_VALUE])
@@ -55,13 +48,8 @@ class ToDoList : AbstractController() {
         return ""
     }
 
-    /**
-     * Thymeleaf will let you use the fragment syntax in a controller, as shown below.
-     * https://www.thymeleaf.org/doc/tutorials/2.1/usingthymeleaf.html#defining-and-referencing-fragments
-     */
     @PostMapping(path = ["/create"])
     fun create(@RequestParam("new-todo") title: String, model: Model): String {
-
 
         val newId = todos.maxByOrNull { it.id }?.id.let {
             if (it == null)
