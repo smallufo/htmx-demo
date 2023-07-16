@@ -40,14 +40,8 @@ https://www.thymeleaf.org/doc/articles/layouts.html
                     &nbsp;
                 </th>
             </thead>
-            <tbody id="todo-list">
-            <!--/* This is a Thymeleaf fragment - it is used by the ToDoList.java create()
- controller.
+            <tbody id="todo-list" hx-swap-oob="true">
 
- Thymeleaf will let you use the fragment syntax in a controller!
-
- https://www.thymeleaf.org/doc/tutorials/2.1/usingthymeleaf.html#defining-and-referencing-fragments
- */-->
             <th:block th:fragment="todo">
 
                 <tr th:each="todo : ${todos}">
@@ -59,7 +53,8 @@ https://www.thymeleaf.org/doc/articles/layouts.html
                                 hx-target="closest tr"
                                 hx-swap="outerHTML swap:1s"
                                 hx-trigger="click"
-                                th:attr="hx-delete=@{/public/todo/delete/{id}(id=${todo.id})}">Delete
+                                th:hx-delete="@{/public/todo/delete/{id}(id=${todo.id})}"
+                                >Delete
                         </button>
                     </td>
                 </tr>
