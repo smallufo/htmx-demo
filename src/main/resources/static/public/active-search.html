@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout.html}"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.ultraq.net.nz/thymeleaf/layout ">
+<head>
+    <title>Active Search</title>
+    <!--/* Used only for editing in Pinegrow -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css">
+    <!--*/-->
+
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container alert alert-secondary" role="alert">
+        A tweaked version of the <a href="https://htmx.org/examples/active-search/" target="_blank">
+        HTMX Active Search</a>
+    </div>
+    <div class="container">
+        <input class="form-control" type="search"
+               name="keyword" placeholder="Begin Typing To Search Users..."
+               hx-post="/public/active-search/search"
+               hx-trigger="keyup changed delay:500ms, search"
+               hx-target="#search-results"
+               hx-indicator=".htmx-indicator">
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+            </tr>
+            </thead>
+            <tbody id="search-results"
+                   hx-get="/public/active-search/contacts"
+                   hx-trigger="revealed"
+                   hx-swap="innerHTML"
+            >
+            </tbody>
+        </table>
+    </div>
+</section>
+</body>
+</html>

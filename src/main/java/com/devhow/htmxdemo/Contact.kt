@@ -2,7 +2,7 @@ package com.devhow.htmxdemo
 
 import com.github.javafaker.Faker
 
-data class Contact(var firstName: String?, var lastName: String?, var email: String?) {
+data class Contact(var firstName: String, var lastName: String, var email: String) {
 
 
     companion object {
