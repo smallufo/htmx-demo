@@ -38,7 +38,7 @@ class InputCatalog : AbstractController() {
 
     @PostMapping(path = ["/checkbox"], produces = [MediaType.TEXT_HTML_VALUE])
     @ResponseBody
-    fun checkbox(@RequestParam parameters: Map<String?, String>): String {
+    fun checkbox(@RequestParam parameters: Map<String, String>): String {
         if (parameters.containsKey("checkbox")) if (parameters.containsKey(parameters["checkbox"])) return TagCreator.p(
             "Checkbox " + parameters["checkbox"] + " checked."
         ).render()
@@ -73,28 +73,28 @@ class InputCatalog : AbstractController() {
 
     @PostMapping(path = ["/date"], produces = [MediaType.TEXT_HTML_VALUE])
     @ResponseBody
-    fun date(@RequestParam("demo-date") date: String?): String {
+    fun date(@RequestParam("demo-date") date: String): String {
         val parse = LocalDate.parse(date)
         return TagCreator.p("Selected $parse.").render()
     }
 
     @PostMapping(path = ["/time"], produces = [MediaType.TEXT_HTML_VALUE])
     @ResponseBody
-    fun time(@RequestParam("demo-time") time: String?): String {
+    fun time(@RequestParam("demo-time") time: String): String {
         val parse = LocalTime.parse(time)
         return TagCreator.p("Selected $parse.").render()
     }
 
     @PostMapping(path = ["/datetime"], produces = [MediaType.TEXT_HTML_VALUE])
     @ResponseBody
-    fun datetime(@RequestParam("demo-date-time-local") datetime: String?): String {
+    fun datetime(@RequestParam("demo-date-time-local") datetime: String): String {
         val parse = LocalDateTime.parse(datetime)
         return TagCreator.p("Selected $parse.").render()
     }
 
     @PostMapping(path = ["/color"], produces = [MediaType.TEXT_HTML_VALUE])
     @ResponseBody
-    fun color(@RequestParam("demo-color") color: String?): String {
+    fun color(@RequestParam("demo-color") color: String): String {
         val c = Color.decode(color)
         return TagCreator.p(
             TagCreator.join(
@@ -118,7 +118,7 @@ class InputCatalog : AbstractController() {
     @ResponseBody
     fun text(
         @RequestHeader("HX-Trigger-Name") trigger: String,
-        @RequestParam parameters: Map<String?, String?>
+        @RequestParam parameters: Map<String, String>
     ): String {
         val target = parameters[trigger]
         return if (!parameters.containsKey(trigger)) "" else TagCreator.p("$trigger set to $target").render()
@@ -128,7 +128,7 @@ class InputCatalog : AbstractController() {
     @ResponseBody
     fun file(
         @RequestParam("demo-file") file: MultipartFile,
-        @RequestParam parameters: Map<String?, String?>?
+        @RequestParam parameters: Map<String, String>
     ): String {
         val p: ContainerTag<PTag> = TagCreator.p("File uploaded! ").with(
             TagCreator.join(

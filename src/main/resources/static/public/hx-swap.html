@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout.html}"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.ultraq.net.nz/thymeleaf/layout ">
+<head>
+    <title>Active Search</title>
+    <!--/* Used only for editing in Pinegrow -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css">
+    <!--*/-->
+
+</head>
+<body>
+<section layout:fragment="content">
+    <div class="container alert alert-secondary" role="alert">
+        A tweaked version of the <a href="https://htmx.org/attributes/hx-swap/" target="_blank">
+        HTMX hx-swap</a>
+    </div>
+
+    <div class="container alert-danger">
+        <div hx-get="/public/hx-swap/randomText" hx-swap="innerHTML" class="btn btn-outline-danger">innerHTML
+            (default)
+        </div>
+    </div>
+
+    <div class="container alert-warning">
+        <div hx-get="/public/hx-swap/randomText" hx-swap="outerHTML swap:1s" class="btn btn-outline-danger">outerHTML
+            (replaced)
+        </div>
+    </div>
+
+    <div class="container alert-info">
+        <div hx-get="/public/hx-swap/randomText"
+             hx-swap="afterend scroll:top" class="btn btn-outline-primary">
+            afterend scroll:top
+        </div>
+    </div>
+
+    <div class="container alert-success">
+        <div style="height:200px; overflow: scroll"
+             hx-get="/public/hx-swap/randomText"
+             hx-swap="beforeend scroll:bottom" class="btn btn-outline-primary">
+            beforeend scroll:bottom
+        </div>
+    </div>
+
+    <div class="container alert-info">
+        <div hx-get="/public/hx-swap/randomText"
+             hx-swap="beforebegin" class="btn btn-outline-success">
+            beforebegin
+        </div>
+    </div>
+
+    <div class="container alert-success">
+        <div style="height:200px; overflow: scroll"
+             hx-get="/public/hx-swap/randomText"
+             hx-swap="afterbegin scroll:top" class="btn btn-outline-success">
+            afterbegin scroll:top
+        </div>
+    </div>
+
+
+
+</section>
+</body>
+</html>
